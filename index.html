@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A calm, focused practice space for TOEFL reading questions."
+    />
+    <title>Readwell — TOEFL Reading Practice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <button class="brand" data-action="home" aria-label="Go to home">
+          <span class="brand-mark">R</span>
+          <span>readwell</span>
+        </button>
+        <nav class="header-actions" aria-label="Primary navigation">
+          <button class="text-button" data-action="home">Practice</button>
+          <button class="icon-button" id="sound-toggle" aria-label="Toggle interface sounds">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 9v6h4l5 4V5L9 9H5Z"></path>
+              <path class="sound-wave" d="M17 9.5a4 4 0 0 1 0 5"></path>
+              <path class="sound-wave" d="M19 7a7 7 0 0 1 0 10"></path>
+            </svg>
+          </button>
+        </nav>
+      </header>
+
+      <main id="app" tabindex="-1"></main>
+
+      <footer class="site-footer">
+        <span>Read a little. Grow a lot.</span>
+        <button class="text-button reset-button" id="reset-progress">Reset progress</button>
+      </footer>
+    </div>
+
+    <script src="questions.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
