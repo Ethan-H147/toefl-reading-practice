@@ -519,6 +519,328 @@ window.READING_SETS = [
           "Fossils are presented as evidence that helps scientists understand Earth’s past environments, climate, and evolution."
       }
     ]
+  },
+  {
+    id: "listening-module-2",
+    number: "L4",
+    section: "listening",
+    type: "listening-mixed",
+    eyebrow: "Listening · Module 2",
+    title: "Listening Module 2",
+    shortTitle: "Module 2",
+    description: "Complete the final listening tasks for Set 1.",
+    accent: "teal",
+    estimatedMinutes: 16,
+    audioPattern: "Module 2 listening tasks",
+    materials: [
+      {
+        id: "module2-response-01",
+        title: "Spoken prompt 13",
+        context: "Listen to one question, then choose the most natural response.",
+        audioSrc: "assets/audio/set-1/listening-response-13.mp3",
+        audioType: "audio/mpeg"
+      },
+      {
+        id: "module2-response-02",
+        title: "Spoken prompt 14",
+        context: "Listen to one request, then choose the most natural response.",
+        audioSrc: "assets/audio/set-1/listening-response-14.mp3",
+        audioType: "audio/mpeg"
+      },
+      {
+        id: "module2-response-03",
+        title: "Spoken prompt 15",
+        context: "Listen to one request, then choose the most natural response.",
+        audioSrc: "assets/audio/set-1/listening-response-15.mp3",
+        audioType: "audio/mpeg"
+      },
+      {
+        id: "module2-conversation-01",
+        title: "Mural project",
+        context: "Questions 36 and 37 refer to this conversation.",
+        audioSrc: "assets/audio/set-1/listening-conversation-04.mp3",
+        audioType: "audio/mpeg"
+      },
+      {
+        id: "module2-conversation-02",
+        title: "Yoga class",
+        context: "Questions 38 and 39 refer to this conversation.",
+        audioSrc: "assets/audio/set-1/listening-conversation-05.mp3",
+        audioType: "audio/mpeg"
+      },
+      {
+        id: "module2-talk-01",
+        title: "Multi-species anthropology",
+        context: "Questions 40 through 43 refer to this anthropology talk.",
+        audioSrc: "assets/audio/set-1/listening-talk-06.mp3",
+        audioType: "audio/mpeg"
+      },
+      {
+        id: "module2-talk-02",
+        title: "The Eastgate Centre",
+        context: "Questions 44 through 47 refer to this architecture talk.",
+        audioSrc: "assets/audio/set-1/listening-talk-07.mp3",
+        audioType: "audio/mpeg"
+      }
+    ],
+    questions: [
+      {
+        id: "lm2-1",
+        materialId: "module2-response-01",
+        taskName: "Listen and choose a response",
+        heading: "Choose the best response",
+        instruction: "Listen to the prompt, then choose the best response.",
+        prompt: "Choose the best response.",
+        choices: [
+          "Let’s see what’s on the agenda first.",
+          "We need to send invitations.",
+          "The club room is more spacious.",
+          "Friday is better."
+        ],
+        answer: 0,
+        explanation:
+          "The speaker asks whether to invite the whole club or only the officers, so checking the agenda first is the most natural response."
+      },
+      {
+        id: "lm2-2",
+        materialId: "module2-response-02",
+        taskName: "Listen and choose a response",
+        heading: "Choose the best response",
+        instruction: "Listen to the prompt, then choose the best response.",
+        prompt: "Choose the best response.",
+        choices: [
+          "I need to clean them up first.",
+          "I don’t think Tim took notes either.",
+          "Class ran long.",
+          "I didn’t expect so many people to be there."
+        ],
+        answer: 0,
+        explanation:
+          "The speaker asks for notes from yesterday’s class, so needing to clean them up first is a relevant answer."
+      },
+      {
+        id: "lm2-3",
+        materialId: "module2-response-03",
+        taskName: "Listen and choose a response",
+        heading: "Choose the best response",
+        instruction: "Listen to the prompt, then choose the best response.",
+        prompt: "Choose the best response.",
+        choices: [
+          "Yes, I need them immediately.",
+          "I have no idea where I left them.",
+          "No, it’s actually quite far from here.",
+          "You can put them in here."
+        ],
+        answer: 1,
+        explanation:
+          "The speaker asks to borrow headphones, and saying they are misplaced is the only relevant response."
+      },
+      {
+        id: "lm2-4",
+        materialId: "module2-conversation-01",
+        taskName: "Conversations",
+        heading: "Listen to the conversation and answer the question",
+        instruction: "Listen to the conversation, then choose the best answer.",
+        prompt: "What does the man encourage the woman to do?",
+        choices: [
+          "Enter a contest",
+          "Take an art class",
+          "Speak with a judge",
+          "Go to see a mural"
+        ],
+        answer: 0,
+        explanation:
+          "He tells her she should enter the university mural project because her paintings are strong."
+      },
+      {
+        id: "lm2-5",
+        materialId: "module2-conversation-01",
+        taskName: "Conversations",
+        heading: "Listen to the conversation and answer the question",
+        instruction: "Listen to the conversation, then choose the best answer.",
+        prompt: "Why does the man mention the Newspaper Club and Student Council?",
+        choices: [
+          "To identify where he heard about some upcoming events",
+          "To explain why he is unavailable",
+          "To encourage the woman to join new activities",
+          "To point out why he would be a strong candidate"
+        ],
+        answer: 1,
+        explanation:
+          "Those activities are mentioned as existing commitments that make participating difficult."
+      },
+      {
+        id: "lm2-6",
+        materialId: "module2-conversation-02",
+        taskName: "Conversations",
+        heading: "Listen to the conversation and answer the question",
+        instruction: "Listen to the conversation, then choose the best answer.",
+        prompt: "What did the man do at noon?",
+        choices: [
+          "He signed up for a yoga class.",
+          "He entered an empty conference room.",
+          "He read an email sent by the yoga instructor.",
+          "He forwarded an email to the woman."
+        ],
+        answer: 1,
+        explanation:
+          "The man says he stopped in at noon and no one was in the conference room."
+      },
+      {
+        id: "lm2-7",
+        materialId: "module2-conversation-02",
+        taskName: "Conversations",
+        heading: "Listen to the conversation and answer the question",
+        instruction: "Listen to the conversation, then choose the best answer.",
+        prompt: "What does the woman imply the man can do tomorrow?",
+        choices: [
+          "Check his email more frequently",
+          "Send the yoga instructor an email",
+          "Attend a yoga class",
+          "Attend a meeting in the conference room"
+        ],
+        answer: 2,
+        explanation:
+          "She says the instructor rescheduled the yoga class for tomorrow."
+      },
+      {
+        id: "lm2-8",
+        materialId: "module2-talk-01",
+        taskName: "Announcements and academic talks",
+        heading: "Listen to the talk and answer the question",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What is the main purpose of the talk?",
+        choices: [
+          "To contrast two different approaches to anthropology",
+          "To emphasize the importance of anthropology",
+          "To explore the distinction in anthropology between \"culture\" and \"nature\"",
+          "To argue that plants are less important than animals as cultural symbols"
+        ],
+        answer: 2,
+        explanation:
+          "The speaker explains how traditional anthropology separated human culture from nature before introducing multi-species anthropology."
+      },
+      {
+        id: "lm2-9",
+        materialId: "module2-talk-01",
+        taskName: "Announcements and academic talks",
+        heading: "Listen to the talk and answer the question",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What does the speaker imply about a study related to seals?",
+        choices: [
+          "It led to the development of multispecies anthropology.",
+          "It was the first study to examine Arctic hunting rituals.",
+          "It challenged common views about rituals.",
+          "Its view of the animal-human relationship was too simple."
+        ],
+        answer: 3,
+        explanation:
+          "The speaker says early seal studies focused on human symbolism while overlooking seals’ own behaviors and ecological roles."
+      },
+      {
+        id: "lm2-10",
+        materialId: "module2-talk-01",
+        taskName: "Announcements and academic talks",
+        heading: "Listen to the talk and answer the question",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt:
+          "What point does the speaker make about studies of mushroom foragers in Siberia?",
+        choices: [
+          "They were initially rejected by most anthropologists.",
+          "They emphasize the interdependence among different living organisms.",
+          "They focus on the value of mushrooms in the foragers’ rituals.",
+          "They show the symbolic meaning of mushrooms in the lives of foragers."
+        ],
+        answer: 1,
+        explanation:
+          "The talk presents mushrooms, trees, and humans as part of an interdependent network."
+      },
+      {
+        id: "lm2-11",
+        materialId: "module2-talk-01",
+        taskName: "Announcements and academic talks",
+        heading: "Listen to the talk and answer the question",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What will the speaker discuss next?",
+        choices: [
+          "How a study was influenced by a researcher’s personal background",
+          "How culture influences human foraging practices",
+          "How humans have damaged the natural environment",
+          "How research methods have changed"
+        ],
+        answer: 3,
+        explanation:
+          "The speaker says the next topic will be how the multi-species perspective reshapes research methods."
+      },
+      {
+        id: "lm2-12",
+        materialId: "module2-talk-02",
+        taskName: "Announcements and academic talks",
+        heading: "Listen to the talk and answer the question",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What is the main topic of the talk?",
+        choices: [
+          "A type of architecture that combines modern needs with traditional styles",
+          "A building project designed to protect local plant and animal life",
+          "The use of natural materials in modern construction",
+          "A design solution inspired by nature"
+        ],
+        answer: 3,
+        explanation:
+          "The talk explains how the Eastgate Centre’s cooling design was inspired by termite mounds."
+      },
+      {
+        id: "lm2-13",
+        materialId: "module2-talk-02",
+        taskName: "Announcements and academic talks",
+        heading: "Listen to the talk and answer the question",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What is the Eastgate Centre built to house?",
+        choices: [
+          "A research center",
+          "An energy-production facility",
+          "A factory for air conditioners",
+          "Offices and stores"
+        ],
+        answer: 3,
+        explanation:
+          "The speaker describes the Eastgate Centre as a mixed-use complex with retail spaces and offices."
+      },
+      {
+        id: "lm2-14",
+        materialId: "module2-talk-02",
+        taskName: "Announcements and academic talks",
+        heading: "Listen to the talk and answer the question",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What was the architect’s main challenge when designing the Eastgate Centre?",
+        choices: [
+          "Designing a tall structure using only brick and concrete",
+          "Avoiding the need for conventional air conditioning",
+          "Convincing governmental officials to support his project",
+          "Creating a structure that could survive in a harsh environment"
+        ],
+        answer: 1,
+        explanation:
+          "The architect needed to keep the shops and offices cool without traditional air conditioning."
+      },
+      {
+        id: "lm2-15",
+        materialId: "module2-talk-02",
+        taskName: "Announcements and academic talks",
+        heading: "Listen to the talk and answer the question",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What does the speaker imply about vents in the termite mounds?",
+        choices: [
+          "They are located primarily below ground level.",
+          "They help to protect the termites from predators.",
+          "They are much larger than termites’ bodies.",
+          "Termites use them to actively control the airflow in the mounds."
+        ],
+        answer: 3,
+        explanation:
+          "The speaker says termites fine-tune airflow by opening, closing, enlarging, and sealing vents."
+      }
+    ]
   }
 ];
 
@@ -970,8 +1292,15 @@ window.LISTENING_SETS = [
       {
         id: "talk-04",
         title: "Forces acting on a bicycle",
-        context: "Questions 25 and 26 refer to this physics talk.",
+        context: "Questions 25 through 28 refer to this physics talk.",
         audioSrc: "assets/audio/set-1/listening-talk-04.mp3",
+        audioType: "audio/mpeg"
+      },
+      {
+        id: "talk-05",
+        title: "Industrial cities",
+        context: "Questions 29 through 32 refer to this history talk.",
+        audioSrc: "assets/audio/set-1/listening-talk-05.mp3",
         audioType: "audio/mpeg"
       }
     ],
@@ -1095,6 +1424,97 @@ window.LISTENING_SETS = [
         answer: 0,
         explanation:
           "The speaker contrasts the apparently simple act of turning the wheel with the need to balance inertia, gravity, and body position."
+      },
+      {
+        id: "lt-9",
+        materialId: "talk-04",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What does leaning in help a cyclist to do?",
+        choices: [
+          "Go faster",
+          "Avoid falling down",
+          "See more clearly around corners",
+          "Prevent uneven wear on the wheels"
+        ],
+        answer: 1,
+        explanation:
+          "Leaning in helps the rider balance the forces involved in a turn, which helps prevent falling."
+      },
+      {
+        id: "lt-10",
+        materialId: "talk-04",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What do professional cyclists try to do when turning?",
+        choices: [
+          "Slide out significantly on some turns in the road",
+          "Keep their bikes relatively upright at high speeds",
+          "Shift their weight just enough to work against inertia",
+          "Change the direction of only their front wheel"
+        ],
+        answer: 2,
+        explanation:
+          "The talk explains that skilled riders shift their weight to counter inertia while turning."
+      },
+      {
+        id: "lt-11",
+        materialId: "talk-05",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What is the main topic of the talk?",
+        choices: [
+          "Factors contributing to the Industrial Revolution in Europe",
+          "How the historic layouts of medieval cities were preserved",
+          "How the Industrial Revolution affected European cities",
+          "The emergence of the factory system in Europe"
+        ],
+        answer: 2,
+        explanation:
+          "The talk focuses on city changes caused by industrialization, including walls, workplaces, and street layouts."
+      },
+      {
+        id: "lt-12",
+        materialId: "talk-05",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "According to the talk, why were city walls removed?",
+        choices: [
+          "Newer walls were built farther from the centers as cities grew larger.",
+          "Cities were no longer directly threatened by their enemies.",
+          "Laws required greater freedom of movement between neighboring cities.",
+          "Cities used the walls' bricks to build factories."
+        ],
+        answer: 1,
+        explanation:
+          "The talk connects the removal of old walls with changing defensive needs as cities expanded."
+      },
+      {
+        id: "lt-13",
+        materialId: "talk-05",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt: "What point does the speaker make about industrial workplaces?",
+        choices: [
+          "They did not change much from medieval times.",
+          "Entire districts were devoted to factories and housing for workers.",
+          "They often did not provide good conditions for workers.",
+          "Cathedrals were often repurposed as commercial workplaces."
+        ],
+        answer: 2,
+        explanation:
+          "The speaker points out that early industrial workplaces were often crowded or unhealthy for workers."
+      },
+      {
+        id: "lt-14",
+        materialId: "talk-05",
+        instruction: "Listen to the talk, then choose the best answer.",
+        prompt:
+          "According to the speaker, what was one consequence of street layout changes in industrial cities?",
+        choices: [
+          "Property became easier to buy and sell.",
+          "Modern forms of transportation became available.",
+          "New spaces were created for expanding central markets.",
+          "New laws were passed that separated residential and industrial areas."
+        ],
+        answer: 1,
+        explanation:
+          "The street changes supported modern transportation needs in growing industrial cities."
       }
     ]
   }

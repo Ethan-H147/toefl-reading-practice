@@ -42,7 +42,25 @@ function getAllModules() {
 }
 
 function getTestSets() {
-  const modules = getAllModules().filter((module) => module.questions?.length);
+  const moduleOrder = [
+    "complete-words",
+    "daily-reading",
+    "academic-reading",
+    "listen-and-respond",
+    "listening-conversations",
+    "listening-talks",
+    "listening-module-2"
+  ];
+  const modules = getAllModules()
+    .filter((module) => module.questions?.length)
+    .sort((first, second) => {
+      const firstOrder = moduleOrder.indexOf(first.id);
+      const secondOrder = moduleOrder.indexOf(second.id);
+      return (
+        (firstOrder === -1 ? Number.MAX_SAFE_INTEGER : firstOrder) -
+        (secondOrder === -1 ? Number.MAX_SAFE_INTEGER : secondOrder)
+      );
+    });
   return [
     {
       id: "practice-set-1",
@@ -76,7 +94,9 @@ function completedCount(test) {
   ).length;
 }
 
-function getQuestionHeading(module) {
+function getQuestionHeading(module, question) {
+  if (question?.heading) return question.heading;
+
   const headings = {
     "word-completion": "Fill in the missing letters in the paragraph",
     "visual-mcq": "Read the material and answer the question",
@@ -86,6 +106,10 @@ function getQuestionHeading(module) {
     "listening-talk": "Listen to the talk and answer the question"
   };
   return headings[module.type] || "Answer the question";
+}
+
+function getQuestionTaskName(module, question) {
+  return question?.taskName || module.title;
 }
 
 function parkListeningAudio() {
@@ -260,10 +284,10 @@ function renderQuestion() {
       <div class="test-status">
         <strong>${sectionName}</strong>
         <span>Question ${state.questionIndex + 1} of ${entries.length}</span>
-        <span class="test-task-name">${module.title}</span>
+        <span class="test-task-name">${getQuestionTaskName(module, question)}</span>
       </div>
 
-      <h1 class="question-command">${getQuestionHeading(module)}</h1>
+      <h1 class="question-command">${getQuestionHeading(module, question)}</h1>
 
       <div class="question-layout ${isWord ? "word-layout" : ""}">
         ${renderQuestionContent(module, question)}
