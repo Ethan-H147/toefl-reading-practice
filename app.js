@@ -9,6 +9,13 @@ let listeningAudioMaterialId = null;
 
 const STORAGE_KEY = "toefl-training-progress-v1";
 const LEGACY_STORAGE_KEY = "readwell-progress-v1";
+const RECORDING_DB_NAME = "toefl-training-recordings-v1";
+const RECORDING_STORE_NAME = "recordings";
+let speakingRecorder = null;
+let speakingChunks = [];
+let speakingTimer = null;
+let speakingRecordingStartedAt = null;
+let activeRecordingUrl = null;
 
 const state = {
   testId: null,
@@ -37,7 +44,9 @@ function saveProgress() {
 function getAllModules() {
   return [
     ...window.READING_SETS,
-    ...(window.LISTENING_SETS || [])
+    ...(window.LISTENING_SETS || []),
+    ...(window.WRITING_SETS || []),
+    ...(window.SPEAKING_SETS || [])
   ];
 }
 
@@ -49,7 +58,11 @@ function getTestSets() {
     "listen-and-respond",
     "listening-conversations",
     "listening-talks",
-    "listening-module-2"
+    "listening-module-2",
+    "writing-build-sentence",
+    "writing-email",
+    "writing-academic-discussion",
+    "speaking"
   ];
   const modules = getAllModules()
     .filter((module) => module.questions?.length)
@@ -103,7 +116,11 @@ function getQuestionHeading(module, question) {
     "passage-mcq": "Read the passage and answer the question",
     "listening-response": "Listen and choose the best response",
     "listening-conversation": "Listen to the conversation and answer the question",
-    "listening-talk": "Listen to the talk and answer the question"
+    "listening-talk": "Listen to the talk and answer the question",
+    "sentence-builder": "Make an appropriate sentence",
+    "email-writing": "Write an email",
+    "academic-discussion": "Write for an academic discussion",
+    "speaking-response": "Record your spoken response"
   };
   return headings[module.type] || "Answer the question";
 }
@@ -112,9 +129,44 @@ function getQuestionTaskName(module, question) {
   return question?.taskName || module.title;
 }
 
+function getSectionName(module) {
+  const names = {
+    reading: "Reading",
+    listening: "Listening",
+    writing: "Writing",
+    speaking: "Speaking"
+  };
+  return names[module.section] || "Practice";
+}
+
+function getQuestionLayoutClass(module) {
+  if (module.type === "word-completion") return "word-layout";
+  if (
+    module.type === "sentence-builder" ||
+    module.type === "email-writing" ||
+    module.type === "academic-discussion"
+  ) {
+    return "writing-layout";
+  }
+  return "";
+}
+
 function parkListeningAudio() {
   if (listeningAudio.parentNode !== audioDock) {
     audioDock.appendChild(listeningAudio);
+  }
+}
+
+function stopSpeakingRecorder() {
+  if (speakingRecorder?.state === "recording") {
+    speakingRecorder.stop();
+  } else {
+    speakingChunks = [];
+  }
+  speakingRecorder = null;
+  if (speakingTimer) {
+    clearInterval(speakingTimer);
+    speakingTimer = null;
   }
 }
 
@@ -160,6 +212,7 @@ function escapeHtml(value) {
 }
 
 function renderHome() {
+  stopSpeakingRecorder();
   stopListeningAudio();
   state.testId = null;
   const tests = getTestSets();
@@ -233,8 +286,8 @@ function renderQuestion() {
   const test = getTest();
   const entries = flattenTestQuestions(test);
   const { module, question } = entries[state.questionIndex];
-  const isWord = module.type === "word-completion";
-  const sectionName = module.section === "listening" ? "Listening" : "Reading";
+  const layoutClass = getQuestionLayoutClass(module);
+  const sectionName = getSectionName(module);
   const isReviewed = state.reviewed.has(state.questionIndex);
 
   parkListeningAudio();
@@ -250,8 +303,7 @@ function renderQuestion() {
             <select id="question-jump" aria-label="Jump to a question">
               ${entries
                 .map(({ module: entryModule, question: entryQuestion }, index) => {
-                  const entrySection =
-                    entryModule.section === "listening" ? "Listening" : "Reading";
+                  const entrySection = getSectionName(entryModule);
                   const marker = state.progress[entryQuestion.id]?.completed
                     ? "✓ "
                     : state.reviewed.has(index)
@@ -289,12 +341,13 @@ function renderQuestion() {
 
       <h1 class="question-command">${getQuestionHeading(module, question)}</h1>
 
-      <div class="question-layout ${isWord ? "word-layout" : ""}">
+      <div class="question-layout ${layoutClass}">
         ${renderQuestionContent(module, question)}
       </div>
     </section>
   `;
 
+  stopSpeakingRecorder();
   if (module.section === "listening") {
     mountListeningAudio(module, question);
   } else {
@@ -305,6 +358,18 @@ function renderQuestion() {
 }
 
 function renderQuestionContent(set, question) {
+  if (set.type === "speaking-response") {
+    return renderSpeakingContent(set, question);
+  }
+
+  if (
+    set.type === "sentence-builder" ||
+    set.type === "email-writing" ||
+    set.type === "academic-discussion"
+  ) {
+    return renderWritingContent(set, question);
+  }
+
   if (set.type === "word-completion") {
     let blankIndex = 0;
     const paragraph = question.segments
@@ -367,6 +432,539 @@ function renderQuestionContent(set, question) {
       </div>
     </aside>
   `;
+}
+
+
+
+function renderSpeakingContent(set, question) {
+  return `
+    <article class="content-panel speaking-prompt-panel">
+      <p class="instruction">${escapeHtml(question.instruction)}</p>
+      ${
+        question.context
+          ? `<div class="speaking-context">${escapeHtml(question.context)}</div>`
+          : ""
+      }
+      <div class="speaking-prompt-card">
+        <div>
+          <p>${escapeHtml(set.eyebrow)}</p>
+          <h2>${escapeHtml(question.prompt)}</h2>
+        </div>
+        <audio
+          class="speaking-audio"
+          controls
+          preload="metadata"
+          controlslist="nodownload"
+          src="${escapeHtml(question.audioSrc)}"
+        ></audio>
+        <p class="speaking-note">
+          Listen first, then record your response. Your recording is saved only in this browser.
+        </p>
+      </div>
+      <div class="speaking-transcript" id="speaking-transcript" hidden>
+        <strong>Prompt transcript</strong>
+        <p>${escapeHtml(question.transcript || "Transcript not available yet.")}</p>
+      </div>
+    </article>
+    <aside class="answer-panel speaking-record-panel">
+      <p class="instruction">Your speaking response</p>
+      <div class="recording-orb" id="recording-orb" aria-hidden="true"></div>
+      <p class="recording-status" id="recording-status">Ready to record.</p>
+      <p class="recording-timer" id="recording-timer">0:00</p>
+      <div class="speaking-actions">
+        <button class="primary-button" id="start-recording" type="button">Start recording</button>
+        <button class="secondary-button" id="stop-recording" type="button" disabled>Stop</button>
+      </div>
+      <div class="saved-recording" id="saved-recording">
+        <p class="feedback">Checking for saved recording...</p>
+      </div>
+    </aside>
+  `;
+}
+
+function openRecordingDb() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(RECORDING_DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(RECORDING_STORE_NAME)) {
+        db.createObjectStore(RECORDING_STORE_NAME, { keyPath: "questionId" });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function putRecording(questionId, recording) {
+  const db = await openRecordingDb();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(RECORDING_STORE_NAME, "readwrite");
+    transaction.objectStore(RECORDING_STORE_NAME).put({
+      questionId,
+      ...recording,
+      updatedAt: new Date().toISOString()
+    });
+    transaction.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
+  });
+}
+
+async function getRecording(questionId) {
+  const db = await openRecordingDb();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(RECORDING_STORE_NAME, "readonly");
+    const request = transaction.objectStore(RECORDING_STORE_NAME).get(questionId);
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+    transaction.oncomplete = () => db.close();
+  });
+}
+
+async function deleteRecording(questionId) {
+  const db = await openRecordingDb();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(RECORDING_STORE_NAME, "readwrite");
+    transaction.objectStore(RECORDING_STORE_NAME).delete(questionId);
+    transaction.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
+  });
+}
+
+async function clearAllRecordings() {
+  const db = await openRecordingDb();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(RECORDING_STORE_NAME, "readwrite");
+    transaction.objectStore(RECORDING_STORE_NAME).clear();
+    transaction.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
+  });
+}
+
+function formatElapsed(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remaining = String(seconds % 60).padStart(2, "0");
+  return `${minutes}:${remaining}`;
+}
+
+function renderSavedRecording(recording) {
+  const slot = document.querySelector("#saved-recording");
+  if (!slot) return;
+
+  if (activeRecordingUrl) {
+    URL.revokeObjectURL(activeRecordingUrl);
+    activeRecordingUrl = null;
+  }
+
+  if (!recording?.blob) {
+    slot.innerHTML = `<p class="feedback">No saved recording yet.</p>`;
+    return;
+  }
+
+  activeRecordingUrl = URL.createObjectURL(recording.blob);
+  slot.innerHTML = `
+    <div class="saved-recording-card">
+      <strong>Saved recording</strong>
+      <span>${recording.duration ? `${recording.duration}s` : "Saved"} · ${new Date(
+        recording.updatedAt
+      ).toLocaleString()}</span>
+      <audio controls src="${activeRecordingUrl}"></audio>
+      <button class="secondary-button" id="delete-recording" type="button">Delete recording</button>
+    </div>
+  `;
+}
+
+async function loadSavedRecording(question) {
+  try {
+    const recording = await getRecording(question.id);
+    renderSavedRecording(recording);
+  } catch {
+    const slot = document.querySelector("#saved-recording");
+    if (slot) {
+      slot.innerHTML = `<p class="feedback try-again">Could not load saved recording in this browser.</p>`;
+    }
+  }
+}
+
+async function bindSpeakingEvents(question) {
+  if (question.type && question.type !== "speaking-response") return;
+  const startButton = document.querySelector("#start-recording");
+  const stopButton = document.querySelector("#stop-recording");
+  const status = document.querySelector("#recording-status");
+  const timer = document.querySelector("#recording-timer");
+  const orb = document.querySelector("#recording-orb");
+  if (!startButton || !stopButton) return;
+
+  const bindDeleteButton = () => {
+    document.querySelector("#delete-recording")?.addEventListener("click", async () => {
+      await deleteRecording(question.id);
+      saveWritingProgress(question.id, {
+        completed: false,
+        correct: null,
+        hasRecording: false
+      });
+      renderSavedRecording(null);
+    });
+  };
+
+  await loadSavedRecording(question);
+  bindDeleteButton();
+
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    startButton.disabled = true;
+    status.textContent =
+      "Recording is not supported in this browser. Try Chrome or Edge.";
+    return;
+  }
+
+  startButton.addEventListener("click", async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      speakingChunks = [];
+      const recorder = new MediaRecorder(stream);
+      speakingRecorder = recorder;
+      speakingRecordingStartedAt = Date.now();
+
+      recorder.addEventListener("dataavailable", (event) => {
+        if (event.data.size > 0) speakingChunks.push(event.data);
+      });
+
+      recorder.addEventListener("stop", async () => {
+        stream.getTracks().forEach((track) => track.stop());
+        const mimeType = recorder.mimeType || "audio/webm";
+        const blob = new Blob(speakingChunks, { type: mimeType });
+        const duration = Math.max(
+          1,
+          Math.round((Date.now() - speakingRecordingStartedAt) / 1000)
+        );
+        await putRecording(question.id, { blob, mimeType, duration });
+        speakingChunks = [];
+        saveWritingProgress(question.id, {
+          completed: true,
+          correct: null,
+          hasRecording: true,
+          recordingDuration: duration
+        });
+        status.textContent = "Recording saved.";
+        startButton.disabled = false;
+        stopButton.disabled = true;
+        orb.classList.remove("is-recording");
+        if (speakingTimer) clearInterval(speakingTimer);
+        timer.textContent = formatElapsed(duration);
+        renderSavedRecording(await getRecording(question.id));
+        bindDeleteButton();
+      });
+
+      recorder.start();
+      status.textContent = "Recording...";
+      startButton.disabled = true;
+      stopButton.disabled = false;
+      orb.classList.add("is-recording");
+      timer.textContent = "0:00";
+      speakingTimer = setInterval(() => {
+        const elapsed = Math.round((Date.now() - speakingRecordingStartedAt) / 1000);
+        timer.textContent = formatElapsed(elapsed);
+      }, 500);
+    } catch {
+      status.textContent =
+        "Microphone permission was blocked or unavailable. Please allow microphone access.";
+    }
+  });
+
+  stopButton.addEventListener("click", () => {
+    if (speakingRecorder?.state === "recording") {
+      speakingRecorder.stop();
+      status.textContent = "Saving recording...";
+    }
+  });
+}
+
+function getSavedWriting(questionId) {
+  return state.progress[questionId] || {};
+}
+
+function normalizeSentence(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/[?!.,;:]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function buildSentenceFromOrder(question, order) {
+  const builtWords = order
+    .map((index) => question.words[index])
+    .filter(Boolean)
+    .join(" ");
+  return [question.responsePrefix, builtWords]
+    .filter(Boolean)
+    .join(" ")
+    .replace(/\s+([?!.,;:])/g, "$1");
+}
+
+function renderSentenceBuilderPieces(question, order) {
+  const used = new Set(order);
+  const currentSentence = buildSentenceFromOrder(question, order);
+  return `
+    <div class="sentence-response" id="sentence-response" aria-live="polite">
+      ${question.responsePrefix
+        ? `<span class="sentence-fixed">${escapeHtml(question.responsePrefix)}</span>`
+        : ""}
+      ${
+        order.length
+          ? order
+              .map(
+                (wordIndex, position) => `
+                  <button
+                    class="sentence-token"
+                    type="button"
+                    data-response-position="${position}"
+                    aria-label="Remove ${escapeHtml(question.words[wordIndex])}"
+                  >
+                    ${escapeHtml(question.words[wordIndex])}
+                  </button>
+                `
+              )
+              .join("")
+          : `<span class="sentence-placeholder">Click the word boxes below to build your sentence.</span>`
+      }
+    </div>
+    <input type="hidden" id="sentence-current" value="${escapeHtml(currentSentence)}" />
+    <div class="word-bank" id="word-bank">
+      ${question.words
+        .map((word, index) =>
+          used.has(index)
+            ? ""
+            : `
+              <button class="word-tile" type="button" data-word-index="${index}">
+                ${escapeHtml(word)}
+              </button>
+            `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderWritingContent(set, question) {
+  const saved = getSavedWriting(question.id);
+
+  if (set.type === "sentence-builder") {
+    const order = Array.isArray(saved.responseOrder) ? saved.responseOrder : [];
+    return `
+      <article class="content-panel writing-prompt-panel">
+        <p class="instruction">${escapeHtml(question.instruction)}</p>
+        <div class="sentence-context">
+          <span>Conversation sentence</span>
+          <p>${escapeHtml(question.context)}</p>
+        </div>
+      </article>
+      <aside class="answer-panel writing-answer-panel">
+        <p class="instruction">Move the words in the boxes to create a grammatical sentence.</p>
+        <div class="sentence-builder" id="sentence-builder-area">
+          ${renderSentenceBuilderPieces(question, order)}
+        </div>
+        <p class="feedback" id="sentence-feedback" aria-live="polite"></p>
+        <div class="answer-actions writing-actions">
+          <button class="secondary-button" id="clear-sentence" type="button">Clear</button>
+          <button class="primary-button" id="check-sentence" type="button">Check sentence</button>
+        </div>
+      </aside>
+    `;
+  }
+
+  if (set.type === "email-writing") {
+    return `
+      <article class="content-panel writing-prompt-panel">
+        <p class="instruction">Read the information and write an email.</p>
+        <div class="writing-task-card">
+          <div class="email-memo-head">
+            <span>To: ${escapeHtml(question.to)}</span>
+            <span>Subject: ${escapeHtml(question.subject)}</span>
+          </div>
+          <p>${escapeHtml(question.scenario)}</p>
+          <h2>In your email, do the following:</h2>
+          <ul>
+            ${question.requirements
+              .map((item) => `<li>${escapeHtml(item)}</li>`)
+              .join("")}
+          </ul>
+          <p class="writing-note">${escapeHtml(question.note)}</p>
+        </div>
+      </article>
+      <aside class="answer-panel writing-answer-panel">
+        ${renderWritingTextarea(question, saved.response || "")}
+      </aside>
+    `;
+  }
+
+  return `
+    <article class="content-panel writing-prompt-panel">
+      <p class="instruction">Read the professor's question and student responses. Then make your contribution.</p>
+      <div class="discussion-board">
+        <article class="professor-post">
+          <span>${escapeHtml(question.professor)}</span>
+          <h2>${escapeHtml(question.topic)}</h2>
+          <p>${escapeHtml(question.prompt)}</p>
+        </article>
+        <div class="student-posts">
+          ${question.studentPosts
+            .map(
+              (post) => `
+                <article>
+                  <strong>${escapeHtml(post.name)}</strong>
+                  <p>${escapeHtml(post.text)}</p>
+                </article>
+              `
+            )
+            .join("")}
+        </div>
+      </div>
+    </article>
+    <aside class="answer-panel writing-answer-panel">
+      ${renderWritingTextarea(question, saved.response || "")}
+    </aside>
+  `;
+}
+
+function renderWritingTextarea(question, savedText) {
+  const wordCount = countWords(savedText);
+  return `
+    <label class="writing-response-label" for="writing-response">Your Response:</label>
+    <textarea
+      id="writing-response"
+      class="writing-response"
+      data-question-id="${escapeHtml(question.id)}"
+      placeholder="${escapeHtml(question.placeholder || "Type your response here...")}"
+      spellcheck="true"
+    >${escapeHtml(savedText)}</textarea>
+    <div class="writing-response-meta">
+      <span id="writing-save-status">Draft saved in this browser</span>
+      <span><strong id="writing-word-count">${wordCount}</strong> words</span>
+    </div>
+    <p class="feedback" id="writing-feedback" aria-live="polite">
+      This response will be stored locally. Grading can be added later.
+    </p>
+  `;
+}
+
+function countWords(value) {
+  const words = String(value).trim().match(/\b[\w'-]+\b/g);
+  return words ? words.length : 0;
+}
+
+function saveWritingProgress(questionId, data) {
+  const previous = state.progress[questionId] || {};
+  state.progress[questionId] = {
+    ...previous,
+    ...data,
+    updatedAt: new Date().toISOString()
+  };
+  saveProgress();
+}
+
+function updateSentenceBuilder(question, order) {
+  const area = document.querySelector("#sentence-builder-area");
+  if (!area) return;
+  area.innerHTML = renderSentenceBuilderPieces(question, order);
+  const response = buildSentenceFromOrder(question, order);
+  saveWritingProgress(question.id, {
+    completed: order.length > 0,
+    correct: false,
+    response,
+    responseOrder: order
+  });
+  bindSentenceBuilderButtons(question, order);
+}
+
+function bindSentenceBuilderButtons(question, order) {
+  document.querySelectorAll(".word-tile").forEach((tile) => {
+    tile.addEventListener("click", () => {
+      order.push(Number(tile.dataset.wordIndex));
+      updateSentenceBuilder(question, order);
+    });
+  });
+
+  document.querySelectorAll(".sentence-token").forEach((token) => {
+    token.addEventListener("click", () => {
+      order.splice(Number(token.dataset.responsePosition), 1);
+      updateSentenceBuilder(question, order);
+    });
+  });
+}
+
+function bindWritingEvents(set, question) {
+  if (set.type === "sentence-builder") {
+    const saved = getSavedWriting(question.id);
+    const order = Array.isArray(saved.responseOrder)
+      ? [...saved.responseOrder]
+      : [];
+    bindSentenceBuilderButtons(question, order);
+
+    document.querySelector("#clear-sentence")?.addEventListener("click", () => {
+      order.splice(0, order.length);
+      updateSentenceBuilder(question, order);
+      const feedback = document.querySelector("#sentence-feedback");
+      if (feedback) {
+        feedback.className = "feedback";
+        feedback.textContent = "";
+      }
+    });
+
+    document.querySelector("#check-sentence")?.addEventListener("click", () => {
+      const response = buildSentenceFromOrder(question, order);
+      const isCorrect =
+        normalizeSentence(response) === normalizeSentence(question.answer);
+      const feedback = document.querySelector("#sentence-feedback");
+      if (feedback) {
+        feedback.className = `feedback ${isCorrect ? "good" : "try-again"}`;
+        feedback.textContent = isCorrect
+          ? "Nice — that sentence is grammatical."
+          : "Not quite. Try changing the word order.";
+      }
+      saveWritingProgress(question.id, {
+        completed: true,
+        correct: isCorrect,
+        response,
+        responseOrder: order
+      });
+    });
+    return;
+  }
+
+  const textarea = document.querySelector("#writing-response");
+  if (!textarea) return;
+  const updateDraft = () => {
+    const response = textarea.value;
+    document.querySelector("#writing-word-count").textContent = countWords(response);
+    document.querySelector("#writing-save-status").textContent = "Draft saved in this browser";
+    saveWritingProgress(question.id, {
+      completed: response.trim().length > 0,
+      correct: null,
+      response,
+      wordCount: countWords(response)
+    });
+  };
+  textarea.addEventListener("input", updateDraft);
+  textarea.addEventListener("blur", updateDraft);
 }
 
 function renderSource(set, question) {
@@ -592,6 +1190,63 @@ function renderDailyMaterial(material) {
 }
 
 function revealCurrentAnswer(set, question) {
+  if (set.type === "speaking-response") {
+    const transcript = document.querySelector("#speaking-transcript");
+    if (transcript) {
+      transcript.hidden = false;
+    }
+    return;
+  }
+
+  if (set.type === "sentence-builder") {
+    const order = question.answerWords.map((answerWord) =>
+      question.words.findIndex(
+        (word, index) =>
+          normalizeSentence(word) === normalizeSentence(answerWord) &&
+          !question.answerWords
+            .slice(0, question.answerWords.indexOf(answerWord))
+            .some((previousWord) => normalizeSentence(previousWord) === normalizeSentence(word))
+      )
+    );
+    const saferOrder = [];
+    const used = new Set();
+    question.answerWords.forEach((answerWord) => {
+      const index = question.words.findIndex(
+        (word, candidateIndex) =>
+          !used.has(candidateIndex) &&
+          normalizeSentence(word) === normalizeSentence(answerWord)
+      );
+      if (index !== -1) {
+        saferOrder.push(index);
+        used.add(index);
+      }
+    });
+    updateSentenceBuilder(question, saferOrder.length ? saferOrder : order);
+    const feedback = document.querySelector("#sentence-feedback");
+    if (feedback) {
+      feedback.className = "feedback good";
+      feedback.textContent = `Correct sentence: ${question.answer}`;
+    }
+    saveWritingProgress(question.id, {
+      completed: true,
+      correct: true,
+      response: question.answer,
+      responseOrder: saferOrder
+    });
+    state.checked = true;
+    return;
+  }
+
+  if (set.type === "email-writing" || set.type === "academic-discussion") {
+    const feedback = document.querySelector("#writing-feedback");
+    if (feedback) {
+      feedback.className = "feedback";
+      feedback.textContent =
+        "There is no fixed answer key for this writing task yet. The student's draft is being saved.";
+    }
+    return;
+  }
+
   if (set.type === "word-completion") {
     const inputs = [...document.querySelectorAll(".word-input")];
     inputs.forEach((input) => {
@@ -624,6 +1279,11 @@ function revealCurrentAnswer(set, question) {
 }
 
 function bindQuestionEvents(set, question, test, totalQuestions) {
+  bindWritingEvents(set, question);
+  if (set.type === "speaking-response") {
+    bindSpeakingEvents(question);
+  }
+
   document.querySelector("#replay-audio")?.addEventListener("click", () => {
     listeningAudio.currentTime = 0;
     listeningAudio.play().catch(() => {});
@@ -711,8 +1371,10 @@ function bindQuestionEvents(set, question, test, totalQuestions) {
   bindHomeButtons();
 }
 
-function recordCompletion(questionId, correct) {
+function recordCompletion(questionId, correct, extra = {}) {
   state.progress[questionId] = {
+    ...(state.progress[questionId] || {}),
+    ...extra,
     completed: true,
     correct,
     updatedAt: new Date().toISOString()
@@ -721,23 +1383,30 @@ function recordCompletion(questionId, correct) {
 }
 
 function renderResults(test) {
+  stopSpeakingRecorder();
   stopListeningAudio();
   const entries = flattenTestQuestions(test);
-  const correct = entries.filter(
+  const completed = entries.filter(
+    ({ question }) => state.progress[question.id]?.completed
+  ).length;
+  const gradedEntries = entries.filter(
+    ({ question }) => typeof state.progress[question.id]?.correct === "boolean"
+  );
+  const correct = gradedEntries.filter(
     ({ question }) => state.progress[question.id]?.correct
   ).length;
 
   app.innerHTML = `
     <section class="results-view">
       <div class="results-card">
-        <div class="score-ring"><span>${correct}/${entries.length}</span></div>
+        <div class="score-ring"><span>${completed}/${entries.length}</span></div>
         <p class="eyebrow">${test.title}</p>
         <h1>Practice complete.</h1>
         <p>
-          You answered ${correct} of ${entries.length} correctly.
-          ${correct === entries.length
-            ? "That was a clean sweep."
-            : "You can revisit the set whenever you want another pass."}
+          You completed ${completed} of ${entries.length} questions.
+          ${gradedEntries.length
+            ? `For graded questions, ${correct} of ${gradedEntries.length} are correct.`
+            : "Your written responses are saved for review."}
         </p>
         <div class="results-actions">
           <button class="secondary-button" id="try-again">Practice again</button>
@@ -770,6 +1439,7 @@ document.querySelector("#reset-progress").addEventListener("click", () => {
   state.reviewed.clear();
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(LEGACY_STORAGE_KEY);
+  clearAllRecordings().catch(() => {});
   renderHome();
 });
 

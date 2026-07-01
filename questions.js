@@ -1519,3 +1519,305 @@ window.LISTENING_SETS = [
     ]
   }
 ];
+
+window.WRITING_SETS = [
+  {
+    id: "writing-build-sentence",
+    number: "W1",
+    section: "writing",
+    type: "sentence-builder",
+    eyebrow: "Writing · Build a Sentence",
+    title: "Build a Sentence",
+    shortTitle: "Build a Sentence",
+    description: "Move the words in the boxes to create grammatical sentences.",
+    accent: "amber",
+    estimatedMinutes: 10,
+    questions: [
+      {
+        id: "ws-1",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "I saw a job posting for a part-time position at the student bookstore.",
+        words: ["for", "you", "have", "it", "applied", "yet?"],
+        answerWords: ["have", "you", "applied", "for", "it", "yet?"],
+        answer: "Have you applied for it yet?"
+      },
+      {
+        id: "ws-2",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "I'm thinking of applying for a scholarship.",
+        words: ["application", "started", "you", "have", "the", "process?"],
+        answerWords: ["have", "you", "started", "the", "application", "process?"],
+        answer: "Have you started the application process?"
+      },
+      {
+        id: "ws-3",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "Hannah mentioned the upcoming research conference in her email.",
+        words: ["know", "the", "schedule", "do", "if", "she", "you", "included?"],
+        answerWords: ["do", "you", "know", "if", "she", "included", "the", "schedule?"],
+        answer: "Do you know if she included the schedule?"
+      },
+      {
+        id: "ws-4",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "I have a meeting with my advisor this afternoon.",
+        words: ["you", "what", "discussing", "be", "will?"],
+        answerWords: ["what", "will", "you", "be", "discussing?"],
+        answer: "What will you be discussing?"
+      },
+      {
+        id: "ws-5",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "I need to finish my essay by Friday.",
+        words: ["are", "writing", "you", "about", "topic", "what?"],
+        answerWords: ["what", "topic", "are", "you", "writing", "about?"],
+        answer: "What topic are you writing about?"
+      },
+      {
+        id: "ws-6",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "Tomorrow is the big game between our school and the rival team.",
+        words: ["does", "the", "what", "game", "start", "time?"],
+        answerWords: ["what", "time", "does", "the", "game", "start?"],
+        answer: "What time does the game start?"
+      },
+      {
+        id: "ws-7",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "Did you finish the assignment on time?",
+        words: ["the", "deadline.", "not", "it", "before", "to", "complete", "able", "was", "I"],
+        answerWords: ["I", "was", "not", "able", "to", "complete", "it", "before", "the", "deadline."],
+        answer: "I was not able to complete it before the deadline."
+      },
+      {
+        id: "ws-8",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "The assignment deadline has been extended.",
+        words: ["do", "the", "new", "due", "date", "know", "has", "been", "announced", "you", "if?"],
+        answerWords: ["do", "you", "know", "if", "the", "new", "due", "date", "has", "been", "announced?"],
+        answer: "Do you know if the new due date has been announced?"
+      },
+      {
+        id: "ws-9",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "Did you get a chance to review the report?",
+        responsePrefix: "Sorry, but I",
+        words: ["to", "look", "not", "at", "time", "have", "had", "it", "yet."],
+        answerWords: ["have", "not", "had", "time", "to", "look", "at", "it", "yet."],
+        answer: "Sorry, but I have not had time to look at it yet."
+      },
+      {
+        id: "ws-10",
+        taskName: "Build a Sentence",
+        instruction: "Make an appropriate sentence.",
+        context: "Why aren't you attending the conference?",
+        responsePrefix: "The dates",
+        words: ["it", "conflict", "with", "other", "commitments", "when", "is", "scheduled", "my"],
+        answerWords: ["when", "it", "is", "scheduled", "conflict", "with", "my", "other", "commitments"],
+        answer: "The dates when it is scheduled conflict with my other commitments."
+      }
+    ]
+  },
+  {
+    id: "writing-email",
+    number: "W2",
+    section: "writing",
+    type: "email-writing",
+    eyebrow: "Writing · Write an Email",
+    title: "Write an Email",
+    shortTitle: "Email",
+    description: "Use the information provided to write an email.",
+    accent: "purple",
+    estimatedMinutes: 7,
+    questions: [
+      {
+        id: "we-1",
+        taskName: "Write an Email",
+        instruction: "Write an email using the information provided.",
+        to: "Julia",
+        subject: "Ideas for recycling awareness event",
+        scenario:
+          "You recently joined a student organization at your university that focuses on environmental conservation. The group is planning an upcoming event to raise awareness about recycling and reducing waste. You have some ideas for activities and would like to share them with the group leader, Julia.",
+        requirements: [
+          "Describe your ideas for the awareness event.",
+          "Explain why you believe these activities will be effective.",
+          "Offer to help organize and implement the activities."
+        ],
+        note: "Write as much as you can and in complete sentences.",
+        placeholder: "Dear Julia,\n\nI wanted to share a few ideas for the recycling awareness event..."
+      }
+    ]
+  },
+  {
+    id: "writing-academic-discussion",
+    number: "W3",
+    section: "writing",
+    type: "academic-discussion",
+    eyebrow: "Writing · Academic Discussion",
+    title: "Write for an Academic Discussion",
+    shortTitle: "Academic Discussion",
+    description: "Participate in an online academic discussion.",
+    accent: "green",
+    estimatedMinutes: 10,
+    questions: [
+      {
+        id: "wd-1",
+        taskName: "Write for an Academic Discussion",
+        professor: "Dr. Achebe",
+        topic: "Nature versus nurture in human development",
+        prompt:
+          "We've been discussing the role of nature versus nurture in human development. Some experts believe that genetics play the most significant role in shaping who we are, while others argue that our environment and experiences are more important. Which do you think has a greater impact on human development: nature or nurture? Why?",
+        studentPosts: [
+          {
+            name: "Claire",
+            text:
+              "I think nurture has a greater impact on human development. Our environment and experiences shape our beliefs, behaviors, and personalities. While genetics provide a foundation, it is our interactions and experiences that truly define who we become."
+          },
+          {
+            name: "Paul",
+            text:
+              "In my opinion, nature has a more significant role. Genetics determine many aspects of our personality, intelligence, and physical abilities. While the environment can influence these traits, our genetic makeup is the primary factor in shaping who we are."
+          }
+        ],
+        placeholder:
+          "I believe that... One reason is... This connects to Claire's/Paul's point because..."
+      }
+    ]
+  }
+];
+
+window.SPEAKING_SETS = [
+  {
+    id: "speaking",
+    number: "S1",
+    section: "speaking",
+    type: "speaking-response",
+    eyebrow: "Speaking · Module 1",
+    title: "Speaking Module 1",
+    shortTitle: "Speaking",
+    description: "Listen and repeat prompts, then answer interview questions.",
+    accent: "teal",
+    estimatedMinutes: 12,
+    questions: [
+      {
+        id: "sp-1",
+        taskName: "Listen and Repeat",
+        heading: "Listen and repeat only once",
+        instruction:
+          "You are working a part-time job at a grocery store near campus. You are being trained to assist customers. Listen to your trainer and repeat what he says.",
+        prompt: "Repeat the trainer's sentence.",
+        audioSrc: "assets/audio/set-1/speaking-repeat-01.mp3",
+        transcript: "Milk and yogurt are in the dairy section."
+      },
+      {
+        id: "sp-2",
+        taskName: "Listen and Repeat",
+        heading: "Listen and repeat only once",
+        instruction: "Listen carefully and repeat what you heard. Repeat only once.",
+        prompt: "Repeat the trainer's sentence.",
+        audioSrc: "assets/audio/set-1/speaking-repeat-02.mp3",
+        transcript: "Bread is freshly baked on site every day."
+      },
+      {
+        id: "sp-3",
+        taskName: "Listen and Repeat",
+        heading: "Listen and repeat only once",
+        instruction: "Listen carefully and repeat what you heard. Repeat only once.",
+        prompt: "Repeat the trainer's sentence.",
+        audioSrc: "assets/audio/set-1/speaking-repeat-03.mp3",
+        transcript: "We have a huge selection of fresh fruits and vegetables."
+      },
+      {
+        id: "sp-4",
+        taskName: "Listen and Repeat",
+        heading: "Listen and repeat only once",
+        instruction: "Listen carefully and repeat what you heard. Repeat only once.",
+        prompt: "Repeat the trainer's sentence.",
+        audioSrc: "assets/audio/set-1/speaking-repeat-04.mp3",
+        transcript: "This flyer has all our weekly deals and special discounts."
+      },
+      {
+        id: "sp-5",
+        taskName: "Listen and Repeat",
+        heading: "Listen and repeat only once",
+        instruction: "Listen carefully and repeat what you heard. Repeat only once.",
+        prompt: "Repeat the trainer's sentence.",
+        audioSrc: "assets/audio/set-1/speaking-repeat-05.mp3",
+        transcript: "The checkout counter is located at the front of the store."
+      },
+      {
+        id: "sp-6",
+        taskName: "Listen and Repeat",
+        heading: "Listen and repeat only once",
+        instruction: "Listen carefully and repeat what you heard. Repeat only once.",
+        prompt: "Repeat the trainer's sentence.",
+        audioSrc: "assets/audio/set-1/speaking-repeat-06.mp3",
+        transcript:
+          "If you need help while learning, please don't hesitate to ask a full-time store associate."
+      },
+      {
+        id: "sp-7",
+        taskName: "Listen and Repeat",
+        heading: "Listen and repeat only once",
+        instruction: "Listen carefully and repeat what you heard. Repeat only once.",
+        prompt: "Repeat the trainer's sentence.",
+        audioSrc: "assets/audio/set-1/speaking-repeat-07.mp3",
+        transcript:
+          "Download our app and sign up for our newsletter to stay informed about upcoming sales."
+      },
+      {
+        id: "sp-8",
+        taskName: "Take an Interview",
+        heading: "Please answer the interviewer's question",
+        instruction:
+          "As part of a university project, you have agreed to take part in a short research interview about health and wellness habits.",
+        context:
+          "A graduate student conducting the research will ask you some questions online. Answer as fully as you can.",
+        prompt: "Answer the interviewer's question.",
+        audioSrc: "assets/audio/set-1/speaking-interview-01.mp3",
+        transcript:
+          "Thank you for agreeing to participate. I'd like to ask you some questions about your health and wellness habits. First, do you have any specific routines or practices you use to maintain your physical well-being? If so, what are they?"
+      },
+      {
+        id: "sp-9",
+        taskName: "Take an Interview",
+        heading: "Please answer the interviewer's question",
+        instruction: "Answer the interviewer's question. Say as much as you can in the time allowed.",
+        prompt: "Answer the interviewer's question.",
+        audioSrc: "assets/audio/set-1/speaking-interview-02.mp3",
+        transcript:
+          "Thank you. Can you describe any dietary choices or habits that you follow to stay healthy? Give details to extend your answer."
+      },
+      {
+        id: "sp-10",
+        taskName: "Take an Interview",
+        heading: "Please answer the interviewer's question",
+        instruction: "Answer the interviewer's question. Say as much as you can in the time allowed.",
+        prompt: "Answer the interviewer's question.",
+        audioSrc: "assets/audio/set-1/speaking-interview-03.mp3",
+        transcript:
+          "Interesting. If you could make one significant change to your diet or exercise routine to stay healthy, what would it be? Why would you make that particular choice?"
+      },
+      {
+        id: "sp-11",
+        taskName: "Take an Interview",
+        heading: "Please answer the interviewer's question",
+        instruction: "Answer the interviewer's question. Say as much as you can in the time allowed.",
+        prompt: "Answer the interviewer's question.",
+        audioSrc: "assets/audio/set-1/speaking-interview-04.mp3",
+        transcript:
+          "Great. Some people believe that mental health is just as important as physical health and should be given equal attention. Do you agree or disagree with this viewpoint? Why?"
+      }
+    ]
+  }
+];
+
