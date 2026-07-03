@@ -1,1 +1,77 @@
-x
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="TOEFL writing practice section." />
+    <title>TOEFL Training Writing Practice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <button class="brand" type="button" onclick="location.href='index.html'" aria-label="Go to home">
+          <span class="brand-mark">T</span>
+          <span class="brand-copy">
+            <strong>TOEFL Training</strong>
+            <small>Writing Practice</small>
+          </span>
+        </button>
+      </header>
+
+      <nav class="site-nav" aria-label="Primary navigation">
+        <div>
+          <button type="button" onclick="location.href='index.html'">Home</button>
+          <button type="button" onclick="location.href='mock.html'">Mock Tests</button>
+          <button type="button" onclick="location.href='reading.html'">Reading</button>
+          <button type="button" onclick="location.href='listening.html'">Listening</button>
+          <button type="button" onclick="location.href='speaking.html'">Speaking</button>
+          <button class="active" type="button" onclick="location.href='writing.html'">Writing</button>
+        </div>
+      </nav>
+
+      <div id="persistent-audio-dock" aria-hidden="true"></div>
+      <main id="app" tabindex="-1"></main>
+
+      <footer class="site-footer">
+        <span>Read. Listen. Grow.</span>
+        <button class="text-button reset-button" id="reset-progress" type="button">Reset progress</button>
+      </footer>
+    </div>
+
+    <script>
+      window.TOEFL_PAGE = {
+        section: "writing",
+        title: "Writing Practice"
+      };
+    </script>
+    <script src="questions.js"></script>
+    <script>
+      window.READING_SETS = [];
+      window.LISTENING_SETS = [];
+      window.WRITING_SETS = window.WRITING_SETS || [];
+      window.SPEAKING_SETS = [];
+    </script>
+    <script src="app.js"></script>
+    <script>
+      getTestSets = function () {
+        const modules = getAllModules().filter((module) => module.questions?.length);
+        return [
+          {
+            id: "writing-practice",
+            title: window.TOEFL_PAGE.title,
+            modules,
+            estimatedMinutes: modules.reduce(
+              (sum, module) => sum + (module.estimatedMinutes || 0),
+              0
+            )
+          }
+        ];
+      };
+      renderHome();
+    </script>
+  </body>
+</html>
