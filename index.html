@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="A calm, focused practice space for TOEFL reading and listening questions."
+      content="A calm, focused TOEFL practice space for reading, listening, speaking, and writing."
     />
     <title>TOEFL Training</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,7 +19,7 @@
   <body>
     <div class="page-shell">
       <header class="site-header">
-        <button class="brand" data-action="home" aria-label="Go to home">
+        <button class="brand" type="button" onclick="location.href='index.html'" aria-label="Go to home">
           <span class="brand-mark">T</span>
           <span class="brand-copy">
             <strong>TOEFL Training</strong>
@@ -30,22 +30,96 @@
 
       <nav class="site-nav" aria-label="Primary navigation">
         <div>
-          <button class="active" data-action="home">Home</button>
-          <button data-action="home">Mock Tests</button>
-          <span>English Practice</span>
+          <button class="active" type="button" onclick="location.href='index.html'">Home</button>
+          <button type="button" onclick="location.href='mock.html'">Mock Tests</button>
+          <button type="button" onclick="location.href='reading.html'">Reading</button>
+          <button type="button" onclick="location.href='listening.html'">Listening</button>
+          <button type="button" onclick="location.href='speaking.html'">Speaking</button>
+          <button type="button" onclick="location.href='writing.html'">Writing</button>
         </div>
       </nav>
 
-      <div id="persistent-audio-dock" aria-hidden="true"></div>
-      <main id="app" tabindex="-1"></main>
+      <main id="app" tabindex="-1">
+        <section class="home-view mock-home">
+          <div class="mock-page-heading">
+            <p class="eyebrow">TOEFL Training</p>
+            <h1>Practice by Section</h1>
+            <p class="mock-tagline">
+              Build each TOEFL skill separately, then combine them in a full mock test.
+            </p>
+          </div>
+
+          <div class="practice-grid">
+            <button class="set-card blue" type="button" onclick="location.href='reading.html'">
+              <span class="card-number">01</span>
+              <span class="card-icon">R</span>
+              <h3>Reading Practice</h3>
+              <p>Practice vocabulary, daily reading, and academic passages.</p>
+              <div class="card-meta">
+                <span>Open section</span>
+                <span class="card-ready">Start</span>
+              </div>
+            </button>
+
+            <button class="set-card purple" type="button" onclick="location.href='listening.html'">
+              <span class="card-number">02</span>
+              <span class="card-icon">L</span>
+              <h3>Listening Practice</h3>
+              <p>Practice spoken responses, conversations, announcements, and lectures.</p>
+              <div class="card-meta">
+                <span>Open section</span>
+                <span class="card-ready">Start</span>
+              </div>
+            </button>
+
+            <button class="set-card teal" type="button" onclick="location.href='speaking.html'">
+              <span class="card-number">03</span>
+              <span class="card-icon">S</span>
+              <h3>Speaking Practice</h3>
+              <p>Listen, repeat, record responses, and review saved speaking answers.</p>
+              <div class="card-meta">
+                <span>Open section</span>
+                <span class="card-ready">Start</span>
+              </div>
+            </button>
+
+            <button class="set-card amber" type="button" onclick="location.href='writing.html'">
+              <span class="card-number">04</span>
+              <span class="card-icon">W</span>
+              <h3>Writing Practice</h3>
+              <p>Practice sentence building, email writing, and academic discussion tasks.</p>
+              <div class="card-meta">
+                <span>Open section</span>
+                <span class="card-ready">Start</span>
+              </div>
+            </button>
+
+            <button class="set-card green" type="button" onclick="location.href='mock.html'">
+              <span class="card-number">05</span>
+              <span class="card-icon">T</span>
+              <h3>Full Mock Test</h3>
+              <p>Take TOEFL Practice Set 1 as one continuous scored practice test.</p>
+              <div class="card-meta">
+                <span>Open mock page</span>
+                <span class="card-ready">Start</span>
+              </div>
+            </button>
+          </div>
+        </section>
+      </main>
 
       <footer class="site-footer">
-        <span>Read. Listen. Grow.</span>
-        <button class="text-button reset-button" id="reset-progress">Reset progress</button>
+        <span>Read. Listen. Speak. Write. Grow.</span>
+        <button class="text-button reset-button" id="reset-progress" type="button">Reset progress</button>
       </footer>
     </div>
 
-    <script src="questions.js"></script>
-    <script src="app.js"></script>
+    <script>
+      document.querySelector("#reset-progress").addEventListener("click", () => {
+        localStorage.removeItem("toefl-training-progress-v1");
+        localStorage.removeItem("readwell-progress-v1");
+        indexedDB.deleteDatabase("toefl-training-recordings-v1");
+      });
+    </script>
   </body>
 </html>
